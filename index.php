@@ -1,24 +1,11 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: tioncico
  * Date: 2017/11/7 0007
  * Time: 19:17
  */
-$i = 100;
-ob_start();//php-cli模式下,默认关闭buffer,主要测试缓冲区的作用
-while ($i > 0) {
-    echo $i . "\n";
-    $i--;
-    sleep(1);
-    if ($i % 2 == 0) {
-        echo 'T' . time() . "\n";
-        ob_end_flush();
-        ob_start();
-    }
-}
-echo '完成';
-die;
 define('DS', '/');
 define('ROOT', realpath(' /'));
 define('BASE_DIR', __DIR__);

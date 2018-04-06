@@ -12,6 +12,7 @@ $config = array(
     'CONTROLLER' => 'Index',
     'ACTION' => 'Index',
     'APP_NAME' => APP,
+    'ROUTE_TYPE'=>1,//标准get模式,m模块c控制器a方法,
 
     /*函数配置*/
     'DEFAULT_FILTER' => 'htmlspecialchars', // 默认参数过滤方法 用于I函数...

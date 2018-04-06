@@ -16,11 +16,32 @@ class Loader
      * 自动加载
      * @param $class
      */
-    static function autoload($class)
+    static function autoload()
     {
+        spl_autoload_register('self::register_1');
+//        spl_autoload_register('self::register_2');
+//        spl_autoload_register('self::register_3');
+    }
+
+    static function register_1($class){
+//        var_dump($class);
         $file=BASE_DIR.'/'.str_replace('\\','/',$class).'.php';
-        if(is_file($file)){
+        if(file_exists($file)){
             require_once $file;
         }
     }
+/*    static function register_2($class){
+        $file=BASE_DIR.'/'.APP.'/Index/'.$class.'.php';
+        if(file_exists($file)){
+            require_once $file;
+        }
+    }*/
+/*    static function register_3($class){
+        $file=BASE_DIR.'/Sphp/Core/Lib/'.$class.'.php';
+        if(file_exists($file)){
+            require_once $file;
+        }
+    }*/
+
+
 }

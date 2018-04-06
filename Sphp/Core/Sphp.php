@@ -10,6 +10,7 @@
 namespace Sphp\Core;
 
 use Sphp\Core\lib\Conf;
+use Sphp\Core\Lib\Controller;
 
 define('LOG_PATH',       BASE_RUN_TIME_DIR.'/Logs/'); // 应用日志目录
 define('TEMP_PATH',      BASE_RUN_TIME_DIR.'/Temp/'); // 应用缓存目录
@@ -21,40 +22,47 @@ class Sphp
 
     public static function run()
     {
-        self::autoload();
-        $route = \Sphp\Core\Factory::getRouteInstance();
-        Factory::getLogInstance()->init();
+        self::autoload();//自动加载
+        self::error();//错误处理
+        $route = \Sphp\Core\Factory::getRouteInstance();//路由
+        Factory::getLogInstance()->init();//日志初始化
+
         self::$module_name = $route->module;
         self::$controller_name = $route->controller;
         self::$action_name = $route->action;
-        self::getConf();
-        Db::setConfig(C('database'));
-        $controller_file = BASE_DIR . DS . APP . DS . self:: $module_name . DS . 'Controller' . DS . self::$controller_name . '.php';
-        if (is_file($controller_file)) {
-            include $controller_file;
-        } else {
-            if (DEBUG) {
-//                throw new Exception($route->controller . '控制器不存在');
-            } else {
-//                show404();
-            }
-        }
-        $controller_path = '\\App' . '\\' . self::$module_name . '\\' . 'Controller' . '\\' . self:: $controller_name;
-        $Controller = new $controller_path();
+        self::getConf();//加载配置
+        Db::setConfig(C('database'));//设置mysql.兼容tp3.2 orm
+        $controller = '\\'.APP . '\\' . self::$module_name . '\\' . 'Controller' . '\\' . self:: $controller_name;
+//        var_dump($a = new Controller());
         try {
-            $action_name = self::$action_name;
-            $Controller->$action_name();
-        } catch (\ReflectionException $e) {
-            // 方法调用发生异常后 引导到__call方法处理
-            $method = new \ReflectionMethod(self::$module_name,'__call');
-            $method->invokeArgs(self::$module_name,array($action_name,''));
+            $controller_reflection = new \ReflectionClass($controller);
+            if($controller_reflection->isSubclassOf('\\Sphp\\Core\\Lib\\Controller')===false){
+                throw new \ReflectionException('该类不是controller');
+            }
+            $method = $controller_reflection->getMethod(self::$action_name);
+            $action = self::$action_name;
+            $controller_instance = new $controller;
+            $controller_instance->$action();
+        } catch (\ReflectionException $e) {//反射方法不存在,则抛出该异常
+            Error::appException($e);
+        }catch (\Exception $e){
+            Error::appException($e);
         }
     }
 
     private static function autoload()
     {
         include_once CORE_DIR . '/Loader.php';
-        spl_autoload_register('\\Sphp\\Core\\Loader::autoload');
+        Loader::autoload();
+    }
+
+    private static function error(){
+        error_reporting(0);//关闭错误报告,全部交给框架处理
+        // 设定错误和异常处理
+        register_shutdown_function('\\Sphp\\Core\\Error::fatalError');//致命错误
+        set_error_handler('\\Sphp\\Core\\Error::appError');
+        set_exception_handler('\\Sphp\\Core\\Error::appException');
+//        echo '错误处理注册完成';
     }
 
     /**
