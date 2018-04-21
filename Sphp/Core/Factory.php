@@ -17,7 +17,7 @@ class Factory
      */
     public static function getRouteInstance()
     {
-        $alias = '\Sphp\Core\lib\Route';
+        $alias = '\Sphp\Core\Lib\Route';
         $instance = self::createInstance($alias);
         return $instance;
     }
@@ -28,7 +28,7 @@ class Factory
      */
     public static function getConfInstance()
     {
-        $alias = '\Sphp\Core\lib\Conf';
+        $alias = '\Sphp\Core\Lib\Conf';
         $instance = self::createStaticInstance($alias);
         return $instance;
     }
@@ -39,7 +39,7 @@ class Factory
      */
     public static function getCacheInstance()
     {
-        $alias = 'Sphp\Core\lib\Cache';
+        $alias = 'Sphp\Core\Lib\Cache';
         $instance = self::createStaticInstance($alias);
         return $instance;
     }
@@ -50,7 +50,7 @@ class Factory
      */
     public static function getLogInstance()
     {
-        $alias = 'Sphp\Core\lib\Log';
+        $alias = 'Sphp\Core\Lib\Log';
         $instance = self::createStaticInstance($alias);
         return $instance;
     }
